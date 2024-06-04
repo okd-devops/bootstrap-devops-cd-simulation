@@ -1,0 +1,344 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  data:
+    JAVA_APP_JAR: "/deployments/digloc-detection-native-99.99.99-SNAPSHOT-runner.jar"
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: digloc-detection-native-jar
+- apiVersion: v1
+  data:
+    application.properties: |-
+      quarkus.http.port=9080
+
+      %dev.quarkus.log.level=INFO
+      %stg.quarkus.log.level=ERROR
+      %prod.quarkus.log.level=ERROR
+
+      #is.process-event=false
+      is.wl-subscriber.enabled=false
+      #is.validate-wl-subscriber=false
+      #is.process-recurrence=false
+      #is.validate-campaign-url=false
+      #is.send-to-kafka=false
+
+      message-split.delimiter=,
+
+      transform-message.toDateFormat=MM/dd/yyyy HH:mm:ss
+
+      #Filter Component
+      #((HOUR>=7 AND HOUR<18) OR (HOUR==18 AND MINUTE<=55))
+      #917
+      #from 7 am - 6:55 pm
+      #filter.ntc.from-hour = 7
+      #filter.ntc.to-hour = 18
+      #filter.ntc.to-minutes = 55
+
+      #917
+      #Smart
+      filter.ntc.from-hour = 0
+      filter.ntc.to-hour = 23
+      filter.ntc.to-minutes = 59
+
+      consumer.campaign.name=digloc-detection
+      consumer.enable.auto.commit=true
+      consumer.timeout.ms=1
+      consumer.commit.interval.ms=1
+      consumer.key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+      consumer.value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+      consumer.max.poll.records=500
+      consumer.max.partition.fetch.bytes=3145728
+      consumer.threads=12
+      consumer.thread.pool=5
+      consumer.session.timeout.ms=180000
+      consumer.heartbeat.interval.ms=60000
+      consumer.metric.reporters=org.apache.kafka.common.metrics.JmxReporter
+      consumer.kafka.client.id=digloc-detection
+      consumer.blocking.queue=500
+
+      %dev.bootstrap.servers=99.99.99.99:9092
+      %dev.consumer.kafka.topic=dev_detection_digloc_v1_1
+      %dev.consumer.group.id=npck_ex_grp_cg_detection_digloc_3
+      %dev.producer.kafka.event.topic=dev_detection_events_v1_1
+
+      %stg.bootstrap.servers=99.99.99.99:9092
+      %stg.consumer.kafka.topic=stg_detection_digloc_v1
+      %stg.consumer.group.id=stck_ex_st_cg_detection_digloc
+      %stg.producer.kafka.event.topic=stg_detection_events_v1
+
+      %prod.bootstrap.servers=99.99.99.99:9092
+      %prod.consumer.kafka.topic=detection_digloc_v1
+      %prod.consumer.group.id=ck_ex_st_cg_detection_digloc
+      %prod.producer.kafka.event.topic=detection_events_v1
+
+      #Kafka Enterprise Config
+      %stg.ssl.keystore.location=/deployments/keystore/kafka.stg.stck-ex.keystore.jks
+      %stg.ssl.keystore.password=ZYjI4OD
+      %stg.ssl.truststore.location=/deployments/truststore/kafka.stg.stck-ex.truststore.jks
+      %stg.ssl.truststore.password=ZTNkOD
+      %stg.security.protocol=SSL
+
+      %prod.ssl.keystore.location=/deployments/keystore/kafka.ck-ex.keystore.jks
+      %prod.ssl.keystore.password=YMTT
+      %prod.ssl.truststore.location=/deployments/truststore/kafka.ck-ex.truststore.jks
+      %prod.ssl.truststore.password=YzQNT
+      %prod.security.protocol=SSL
+
+      #Kafka Producer Config
+      producer.enabled=true
+      producer.key.serializer=org.apache.kafka.common.serialization.StringSerializer
+      producer.value.serializer=org.apache.kafka.common.serialization.StringSerializer
+
+      #Aerospike Config
+      aerospike.wl-subscriber-set=wl_webcampaign
+      aerospike.recurrence-set=subsdiglocrecurrence
+      aerospike.campaign-urls-set=campaignurls
+      aerospike.port=3000
+      aerospike.time.to.live=86400
+      #aerospike.max.connection.pool=300
+
+      %dev.aerospike.server=99.99.99.99
+      %dev.aerospike.namespace=steps
+
+      %stg.aerospike.server=99.99.99.99
+      %stg.aerospike.namespace=row_stg
+
+      %prod.aerospike.server=99.99.99.99
+      %prod.aerospike.namespace=row_prod
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: digloc-native-application-properties
+- apiVersion: v1
+  data:
+    fallouturls.csv: apple.com
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: fallout-url
+- apiVersion: v1
+  data:
+    JAVA_APP_DIR: "/tmp/src/target"
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: java-app-dir
+- apiVersion: v1
+  data:
+    proceduretypes.csv: '850'
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: proceduretypes
+- apiVersion: v1
+  data:
+    prometheus-config.yml: "startDelaySecs: 5\r\nssl: false\r\nblacklistObjectNames:
+      [\"java.lang:*\"]"
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: prometheus-webcam
+- apiVersion: v1
+  data:
+    QUARKUS_HTTP_PORT: '9080'
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: quarkus-http-port
+- apiVersion: v1
+  data:
+    QUARKUS_PROFILE: dev
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: quarkus-profile
+- apiVersion: v1
+  data:
+    JAVA_APP_JAR: "/deployments/repartitioner-native-99.99.99-SNAPSHOT-runner.jar"
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: repartitioner-native-jar
+- apiVersion: v1
+  data:
+    application.properties: |-
+      quarkus.http.port=9080
+
+      %dev.quarkus.log.level=INFO
+      %stg.quarkus.log.level=ERROR
+      %prod.quarkus.log.level=ERROR
+
+      #is.process-event=false
+      is.test-mode=false
+      #is.send-to-kafka=false
+
+      consumer.campaign.name=repartitioner
+      consumer.enable.auto.commit=true
+      consumer.timeout.ms=1
+      consumer.commit.interval.ms=1
+      consumer.key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+      consumer.value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+      consumer.max.poll.records=500
+      consumer.max.partition.fetch.bytes=3145728
+      consumer.threads=10
+      consumer.thread.pool=5
+      consumer.session.timeout.ms=180000
+      consumer.heartbeat.interval.ms=60000
+      consumer.metric.reporters=org.apache.kafka.common.metrics.JmxReporter
+      consumer.request.timeout.ms=60000
+      consumer.kafka.client.id=repartitioner
+      consumer.blocking.queue=500
+
+      %dev.bootstrap.servers=99.99.99.99:9092
+      %dev.consumer.kafka.topic=gi_v3_cdh_v4_replica_v1_1
+      %dev.consumer.group.id=npck_ex_grp_cg_detection_3
+      %dev.producer.kafka.event.topic=dev_detection_digloc_v1_1
+
+      %stg.bootstrap.servers=99.99.99.99:9092
+      %stg.consumer.kafka.topic=radcom_gi_v3_cdh_v4_replica_v1
+      %stg.consumer.group.id=stck_ex_st_cg_detection_radcom_gi
+      %stg.producer.kafka.event.topic=stg_detection_digloc_v1
+
+      %prod.bootstrap.servers=99.99.99.99:9092,99.99.99.991:9092
+      %prod.consumer.kafka.topic=radcom_gi_v3_cdh_v4_replica_v1
+      %prod.consumer.group.id=ck_ex_st_cg_detection_gi
+      %prod.producer.kafka.event.topic=detection_digloc_v1
+
+      #Kafka Enterprise Config
+      %stg.ssl.keystore.location=/deployments/keystore/kafka.stg.stck-ex-.keystore.jks
+      %stg.ssl.keystore.password=ZTND
+      %stg.ssl.truststore.location=/deployments/truststore/kafka.stg.stck-ex.truststore.jks
+      %stg.ssl.truststore.password=ZTI4OD
+      %stg.security.protocol=SSL
+
+      %prod.ssl.keystore.location=/deployments/keystore/kafka.ck-ex.keystore.jks
+      %prod.ssl.keystore.password=YzQjNT
+      %prod.ssl.truststore.location=/deployments/truststore/kafka.ck-ex.truststore.jks
+      %prod.ssl.truststore.password=YzQyMNT
+      %prod.security.protocol=SSL
+
+      ## Kafka Producer Config
+      producer.enabled=true
+      producer.key.serializer=org.apache.kafka.common.serialization.StringSerializer
+      producer.value.serializer=org.apache.kafka.common.serialization.StringSerializer
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: repartitioner-native-properties
+- apiVersion: v1
+  data:
+    subsactivities.csv: |-
+      smtp
+      smtps
+      unknown
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: subscriber-activities
+- apiVersion: v1
+  data:
+    systemurls.csv: |-
+      lazada.com.ph,lazada.com.ph,true
+      lazada.com,lazada.com,true
+      zalora.com.ph,zalora.com.ph,true
+      grab.com,grab.com,true
+      mcdonalds.com.ph,mcdonalds.com.ph,true
+      mcdelivery.com.ph,mcdelivery.com.ph,true
+      jollibee.com.ph,jollibee.com.ph,true
+      jollibeedelivery.com,jollibeedelivery.com,true
+      globe.com.ph,globe.com.ph,true
+      shopee.ph,shopee.ph,true
+      bdo.com.ph,bdo.com.ph,true
+      metrobank.com.ph,metrobank.com.ph,true
+      landbank.com,landbank.com,true
+      bpi.com.ph,bpi.com.ph,true
+      chinabank.ph,chinabank.ph,true
+      securitybank.com,securitybank.com,true
+      bancnetonline.com,bancnetonline.com,true
+      rcbc.com,rcbc.com,true
+      rcbconlinebanking.com,rcbconlinebanking.com,true
+      unionbankph.com,unionbankph.com,true
+      eastwestbanker.com,eastwestbanker.com,true
+      cliqq.net,cliqq.net,true
+      coins.ph,coins.ph,true
+      grab.com,grab.com,true
+      paymaya.com,paymaya.com,true
+      paypal.com,paypal.com,true
+      facebook.com,facebook.com,true
+      youtube.com,youtube.com,true
+      messenger.com,messenger.com,true
+      instagram.com,instagram.com,true
+      twitter.com,twitter.com,true
+      skype.com,skype.com,true
+      linkedin.com,linkedin.com,true
+      viber.com,viber.com,true
+      whatsapp.net,whatsapp.net,true
+      tiktokv.com,tiktokv.com,true
+      mobilelegends.com,mobilelegends.com,true
+      alibaba.com,alibaba.com,true
+      alibabagroup.com,alibabagroup.com,true
+      amazon.com,amazon.com,true
+      apple.com,apple.com,true
+      dailymotion.com,dailymotion.com,true
+      ebay.ph,ebay.ph,true
+      gmanetwork.com,gmanetwork.com,true
+      netflix.com,netflix.com,true
+      shopify.com.ph,shopify.com.ph,true
+      spotify.com,spotify.com,true
+      taobao.com,taobao.com,true
+      www.viu.com,www.viu.com,true
+      x.smart,x.smart,true
+      dito.ph,dito.ph,true
+      smart.com.ph,smart.com.ph,true
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: system-url
+- apiVersion: v1
+  data:
+    testnumbers.csv: |-
+      639112441123
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: test-numbers
+- apiVersion: v1
+  data:
+    JAVA_APP_JAR: "/deployments/app-runner.jar"
+  kind: ConfigMap
+  metadata:
+    labels:
+      sprint: 1-cicd-nexus-integration
+      team: sre
+    name: webcam-detection-jar
+kind: List
+metadata:
+  resourceVersion: ''
+  selfLink: ''
