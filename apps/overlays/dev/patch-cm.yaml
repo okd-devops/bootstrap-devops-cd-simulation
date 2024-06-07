@@ -1,6 +1,6 @@
 apiVersion: v1
 data:
-  JAVA_APP_JAR: "/deployments/johnlocpatch-dev-99.99.99-SNAPSHOT-runner.jar"
+  JAVA_APP_JAR: "/deployments/johnlocpatch-dev-now-6-7-2024-99.99.99-SNAPSHOT-runner.jar"
 kind: ConfigMap
 metadata:
   name: digloc-detection-native-jar
